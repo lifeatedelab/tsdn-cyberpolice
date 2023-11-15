@@ -1,4 +1,4 @@
-from fastapi import FastAPI, UploadFile, File, HTTPException
+from fastapi import FastAPI, Request, UploadFile, File, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.wsgi import WSGIMiddleware
 from fastapi.staticfiles import StaticFiles
@@ -26,7 +26,7 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
 
 # Load the XGBoost model
-xgb = joblib.load("xgboost_model.joblib")
+xgb = joblib.load("bin/xgboost_model.joblib")
 
 # Function to get DataFrame from pcap file
 def get_df_from_pcap(file: UploadFile = File(...)):
@@ -65,8 +65,8 @@ def analyze_pcap(file: UploadFile = File(...)):
 
 # Route for testing if the app is running
 @app.get("/")
-def index():
-    return 
+def index(request: Request):
+    return templates.TemplateResponse("index.html", {"request" : request})
 
 # Route to analyze pcap and make predictions
 @app.post("/analyze")
