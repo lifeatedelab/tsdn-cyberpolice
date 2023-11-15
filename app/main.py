@@ -70,8 +70,9 @@ def index(request: Request):
 
 # Route to analyze pcap and make predictions
 @app.post("/analyze")
-async def analyze_endpoint(file: UploadFile = File(...)):
-    return analyze_pcap(file)
+async def analyze_endpoint(request: Request, file: UploadFile = File(...)):
+    result = analyze_pcap(file=file)
+    return templates.TemplateResponse("dashboard.html", {"request" : request})
 
 # Run the app using UVicorn
 if __name__ == "__main__":
