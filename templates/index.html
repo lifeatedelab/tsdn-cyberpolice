@@ -58,10 +58,14 @@
                 
 
                 <!--- DRAG N DROP AREA --->
-                <div id="drop-area" style="border: 2px dashed #ccc; padding: 20px; cursor: pointer;">
-                    <p>Drag & Drop Your File to be Checked</p>
-                    <input type="file"  id="fileInput" dtyle="display: none;">
-                </div>
+                <form action="/analyze" method="post" enctype="multipart/form-data">
+                    <div id="drop-area" style="border: 2px dashed #ccc; padding: 20px; cursor: pointer;">
+                        <p>Drag & Drop Your File to be Checked</p>
+                        <input type="file" id="fileInput" name="fileInput" style="display: none;" onchange="displayFileName()">
+                    </div>
+                    <p id="fileName"></p>
+                    <button type="submit">Submit</button>
+                </form>
                 <script>
                     var dropArea = document.getElementById('drop-area');
             
