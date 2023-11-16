@@ -1,18 +1,17 @@
 import json
-from fastapi import FastAPI, Request, UploadFile, File, HTTPException
+
+import joblib
+import pandas as pd
+import plotly
+import plotly.express as px
+import plotly.figure_factory as ff
+import uvicorn
+from fastapi import FastAPI, File, HTTPException, Request, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.middleware.wsgi import WSGIMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from nfstream import NFStreamer
-import joblib
-import plotly
-import plotly.graph_objects as go
-from xgboost import XGBClassifier
-import pandas as pd
-import uvicorn
 from starlette.middleware.trustedhost import TrustedHostMiddleware
-import plotly.express as px
 
 app = FastAPI(
     title="Cyberpolice",
@@ -98,16 +97,32 @@ def get_bfs_histogram(df):
     # fig = px.histogram(df, x="bidirectional_first_seen_ms", template="plotly_dark")
     # print(df["dst2src_fin_packets"].unique())
 
-    fig = go.Figure()
-    fig.add_trace(go.Histogram(x=df["bidirectional_first_seen_ms"].values, name="BFS"))
-    fig.add_trace(go.Histogram(x=df["bidirectional_last_seen_ms"].values, name="BLS"))
+    # fig = go.Figure()
+    # fig.add_trace(go.Histogram(x=df["bidirectional_first_seen_ms"].values, name="BFS"))
+    # fig.add_trace(go.Histogram(x=df["bidirectional_last_seen_ms"].values, name="BLS"))
 
+    # fig.update_layout(template="plotly_dark")
+    # fig.update_layout(barmode='overlay')
+    # fig.update_traces(opacity=0.8)
+
+    # graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
+
+    x1 = df["bidirectional_first_seen_ms"].values
+    x2 = df["bidirectional_last_seen_ms"].values
+
+    hist_data = [x1, x2]
+
+    group_labels = ["BFS", "BLS"]
+    # colors = ['#A56CC1', '#A6ACEC', '#63F5EF']
+
+    # Create distplot with curve_type set to 'normal'
+    fig = ff.create_distplot(hist_data, group_labels, show_hist=False, show_rug=False)
+
+    # Add title
     fig.update_layout(template="plotly_dark")
-    fig.update_layout(barmode='overlay')
-    fig.update_traces(opacity=0.8)
+    # fig.show()
 
     graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
-
     return graphJSON
 
 
