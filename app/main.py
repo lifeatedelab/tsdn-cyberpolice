@@ -8,6 +8,7 @@ import plotly.figure_factory as ff
 import uvicorn
 from fastapi import FastAPI, File, HTTPException, Request, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.httpsredirect import HTTPSRedirectMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from nfstream import NFStreamer
@@ -22,6 +23,7 @@ app = FastAPI(
 # Add middleware for CORS and Trusted Host
 app.add_middleware(CORSMiddleware, allow_origins=["*"])
 app.add_middleware(TrustedHostMiddleware, allowed_hosts=["*"])
+# app.add_middleware(HTTPSRedirectMiddleware)
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
