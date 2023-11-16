@@ -148,6 +148,7 @@ def index(request: Request):
 # Route to analyze pcap and make predictions
 @app.post("/analyze")
 async def analyze_endpoint(request: Request, file: UploadFile = File(...)):
+
     df = get_df_from_pcap(file=file)
     results = analyze_df(df)["predictions"]  # a binary array
     pie_chart = get_class_pie(results)
@@ -163,6 +164,7 @@ async def analyze_endpoint(request: Request, file: UploadFile = File(...)):
             "app_bar": app_bar,
         },
     )
+
 
 
 # Run the app using UVicorn
