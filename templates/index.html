@@ -30,7 +30,7 @@
             <div class="container">
                 <!-- <img class="navbar-brand" href="#page-top"><img src="assets/img/logo_white.png" alt="..." width="" height="60px"/></img> -->
                 <img class="navbar-brand" href="#page-top">
-                <img src="{{ url_for('static', path = 'assets/img/logo_white.png') }}" alt="..." width="" height="60px"/></img>
+                <img src="{{ url_for('static', path = 'assets/img/logo_white.png') }}" alt="..." width="" height="60px"/>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
                     Menu
                     <i class="fas fa-bars ms-1"></i>
@@ -59,13 +59,11 @@
 
                 <!--- DRAG N DROP AREA --->
                 <form action="/analyze" method="post" enctype="multipart/form-data">
-                    <div id="drop-area" style="border: 2px dashed #ccc; padding: 20px; cursor: pointer;">
-                        <p>Drag & Drop Your File to be Checked</p>
-                        <input type="file" id="fileInput" name="fileInput" style="display: none;" onchange="displayFileName()">
+                    <div class="input-group input-group-lg">
+                      <input type="file" name="file" accept=".pcap" class="form-control form-control-sm" required />
+                      <button type="submit" class="btn btn-primary btn-xl">Upload and Predict</button>
                     </div>
-                    <p id="fileName"></p>
-                    <button type="submit">Submit</button>
-                </form>
+                  </form>
                 <script>
                     var dropArea = document.getElementById('drop-area');
             
