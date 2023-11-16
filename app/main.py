@@ -5,7 +5,7 @@ from fastapi.middleware.wsgi import WSGIMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from nfstream import NFStreamer
-import joblib   
+import joblib
 import plotly
 from xgboost import XGBClassifier
 import pandas as pd
@@ -31,6 +31,7 @@ templates = Jinja2Templates(directory="templates")
 # Load the XGBoost model
 xgb = joblib.load("bin/xgboost_model.joblib")
 
+
 # Function to get DataFrame from pcap file
 def get_df_from_pcap(file: UploadFile = File(...)):
     try:
@@ -43,22 +44,25 @@ def get_df_from_pcap(file: UploadFile = File(...)):
         return df
 
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error during conversion: {str(e)}")
+        raise HTTPException(
+            status_code=500, detail=f"Error during conversion: {str(e)}"
+        )
+
 
 # Function to analyze pcap and make predictions
 def analyze_df(df: pd.DataFrame):
     # df = get_df_from_pcap(file)
 
     features = [
-        'bidirectional_first_seen_ms',
-        'bidirectional_last_seen_ms',
-        'dst2src_cwr_packets',
-        'dst2src_ece_packets',
-        'dst2src_urg_packets',
-        'dst2src_ack_packets',
-        'dst2src_psh_packets',
-        'dst2src_rst_packets',
-        'dst2src_fin_packets',
+        "bidirectional_first_seen_ms",
+        "bidirectional_last_seen_ms",
+        "dst2src_cwr_packets",
+        "dst2src_ece_packets",
+        "dst2src_urg_packets",
+        "dst2src_ack_packets",
+        "dst2src_psh_packets",
+        "dst2src_rst_packets",
+        "dst2src_fin_packets",
     ]
 
     X_test = df[features]
@@ -66,17 +70,27 @@ def analyze_df(df: pd.DataFrame):
 
     return {"predictions": predictions.tolist()}
 
+
 def get_class_pie(predictions):
     count_class0 = predictions.count(0)
     count_class1 = predictions.count(1)
 
-    labels = ['Class 0', 'Class 1']
+    labels = ["Benign", "Malicious"]
     values = [count_class0, count_class1]
 
-    fig = px.pie(names=labels, values=values, hole=0.3, title='Class Distribution Pie Chart', template="plotly_dark")
+    fig = px.pie(
+        names=labels,
+        values=values,
+        hole=0.3,
+        title=f"There are {count_class1} Malicious Traffics",
+        template="plotly_dark",
+    )
+    fig.update_yaxes(automargin=False)
+
     graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
 
     return graphJSON
+
 
 def get_bfs_histogram(df):
     # df = px.data.tips()
@@ -86,35 +100,43 @@ def get_bfs_histogram(df):
 
     return graphJSON
 
+
 def get_application_bar(df):
     # df = px.data.tips()
-    fig = px.histogram(df, y="application_name", template="plotly_dark").update_yaxes(categoryorder='total ascending')
+    fig = px.histogram(df, y="application_name", template="plotly_dark").update_yaxes(
+        categoryorder="total ascending"
+    )
     # print(df["dst2src_fin_packets"].unique())
     graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
 
     return graphJSON
-    
+
 
 # Route for testing if the app is running
 @app.get("/")
 def index(request: Request):
-    return templates.TemplateResponse("index.html", {"request" : request})
+    return templates.TemplateResponse("index.html", {"request": request})
+
 
 # Route to analyze pcap and make predictions
 @app.post("/analyze")
 async def analyze_endpoint(request: Request, file: UploadFile = File(...)):
     df = get_df_from_pcap(file=file)
-    results = analyze_df(df)['predictions'] #a binary array
+    results = analyze_df(df)["predictions"]  # a binary array
     pie_chart = get_class_pie(results)
     bfs_histogram = get_bfs_histogram(df=df)
     app_bar = get_application_bar(df=df)
 
-    return templates.TemplateResponse("dashboard.html", 
-                                      {
-                                          "request" : request,
-                                            "pie_chart": pie_chart,
-                                              "bfs_histogram" : bfs_histogram,
-                                              "app_bar": app_bar})
+    return templates.TemplateResponse(
+        "dashboard.html",
+        {
+            "request": request,
+            "pie_chart": pie_chart,
+            "bfs_histogram": bfs_histogram,
+            "app_bar": app_bar,
+        },
+    )
+
 
 # Run the app using UVicorn
 if __name__ == "__main__":

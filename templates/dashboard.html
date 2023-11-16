@@ -13,7 +13,11 @@
     />
     <style>
       body {
-        background-image: url("{{ url_for('static', path = 'assets/img/background.png') }}"); /* Replace 'path/to/your/image.jpg' with the actual path to your image file */
+        background-image: url("{{ url_for('static', path = 'assets/img/background.png') }}");
+      }
+
+      .row {
+        height: 80vh;
       }
     </style>
     <!-- Add any additional styles or scripts if needed -->
@@ -27,7 +31,6 @@
             <img
               src="{{ url_for('static', path = 'assets/img/logo_white.png') }}"
               alt="Logo"
-              
               height="60"
               class="d-inline-block align-text-center"
             />
@@ -35,8 +38,8 @@
           </a>
         </div>
       </nav>
-      <div class="row">
-        <div class="col-md-4">
+      <div class="row gy-5">
+        <div class="col-sm-4">
           <div class="card">
             <h5 class="card-header">Pie Chart</h5>
             <div class="card-body">
@@ -45,7 +48,7 @@
           </div>
         </div>
 
-        <div class="col-md-4">
+        <div class="col-sm-8">
           <div class="card">
             <h5 class="card-header">Histogram</h5>
             <div class="card-body">
@@ -53,8 +56,10 @@
             </div>
           </div>
         </div>
+      </div>
 
-        <div class="col-md-4">
+      <div class="row gy-5">
+        <div class="col-sm-12">
           <div class="card">
             <h5 class="card-header">Bar Chart</h5>
             <div class="card-body">
@@ -78,19 +83,20 @@
 
         var d3 = Plotly.d3;
         var WIDTH_IN_PERCENT_OF_PARENT = 100,
-          HEIGHT_IN_PERCENT_OF_PARENT = 90;
+          HEIGHT_IN_PERCENT_OF_PARENT = 100;
 
         var gd3 = d3.selectAll(".responsive-plot")
-          .style({
-            width: WIDTH_IN_PERCENT_OF_PARENT + '%',
-            'margin-left': (100 - WIDTH_IN_PERCENT_OF_PARENT) / 2 + '%',
-            height: HEIGHT_IN_PERCENT_OF_PARENT + 'vh',
-            'margin-top': (100 - HEIGHT_IN_PERCENT_OF_PARENT) / 2 + 'vh'
-          });
+        .style({
+          width: 'fit-content',
+          'margin-left': (100 - WIDTH_IN_PERCENT_OF_PARENT) / 2 + '%',
+
+          height: 'fit-content',
+          'margin-top': '0vh'
+        });
 
         var nodes_to_resize = gd3[0];
         window.onresize = function() {
-          for (var i = 0; i < nodes_to_resize.length; i++) {
+          for (var i = 0; nodes_to_resize && i < nodes_to_resize.length; i++) {
             Plotly.Plots.resize(nodes_to_resize[i]);
           }
         };
