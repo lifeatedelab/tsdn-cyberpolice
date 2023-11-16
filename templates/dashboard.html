@@ -16,16 +16,13 @@
         background-image: url("{{ url_for('static', path = 'assets/img/background.png') }}");
       }
 
-      .row {
-        height: 80vh;
-      }
     </style>
     <!-- Add any additional styles or scripts if needed -->
   </head>
 
   <body data-bs-theme="dark">
     <div class="container">
-      <nav class="navbar bg-body-tertiary mt-3 mb-3">
+      <nav class="navbar bg-body-tertiary mt-3 mb-3 rounded">
         <div class="container-fluid">
           <a class="navbar-brand" href="#">
             <img
@@ -38,10 +35,10 @@
           </a>
         </div>
       </nav>
-      <div class="row gy-5">
+      <div class="row mb-3">
         <div class="col-sm-4">
           <div class="card">
-            <h5 class="card-header">Pie Chart</h5>
+            <h5 class="card-header">XGBoost Analysis</h5>
             <div class="card-body">
               <div id="pieChart" class="responsive-plot"></div>
             </div>
@@ -50,20 +47,20 @@
 
         <div class="col-sm-8">
           <div class="card">
-            <h5 class="card-header">Histogram</h5>
+            <h5 class="card-header">Detected Applications</h5>
             <div class="card-body">
-              <div id="bfsHistogram" class="responsive-plot"></div>
+              <div id="appBar" class="responsive-plot"></div>
             </div>
           </div>
         </div>
       </div>
 
-      <div class="row gy-5">
+      <div class="row mb-3">
         <div class="col-sm-12">
           <div class="card">
-            <h5 class="card-header">Bar Chart</h5>
+            <h5 class="card-header">Bidirectional First Seen and Bidirectional Last Seen Distribution (ms)</h5>
             <div class="card-body">
-              <div id="appBar" class="responsive-plot"></div>
+              <div id="bfsHistogram" class="responsive-plot"></div>
             </div>
           </div>
         </div>

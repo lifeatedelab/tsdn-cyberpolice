@@ -7,6 +7,7 @@ from fastapi.templating import Jinja2Templates
 from nfstream import NFStreamer
 import joblib
 import plotly
+import plotly.graph_objects as go
 from xgboost import XGBClassifier
 import pandas as pd
 import uvicorn
@@ -85,7 +86,7 @@ def get_class_pie(predictions):
         title=f"There are {count_class1} Malicious Traffics",
         template="plotly_dark",
     )
-    fig.update_yaxes(automargin=False)
+    # fig.update_yaxes(automargin=False)
 
     graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
 
@@ -94,8 +95,17 @@ def get_class_pie(predictions):
 
 def get_bfs_histogram(df):
     # df = px.data.tips()
-    fig = px.histogram(df, x="bidirectional_first_seen_ms", template="plotly_dark")
+    # fig = px.histogram(df, x="bidirectional_first_seen_ms", template="plotly_dark")
     # print(df["dst2src_fin_packets"].unique())
+
+    fig = go.Figure()
+    fig.add_trace(go.Histogram(x=df["bidirectional_first_seen_ms"].values, name="BFS"))
+    fig.add_trace(go.Histogram(x=df["bidirectional_last_seen_ms"].values, name="BLS"))
+
+    fig.update_layout(template="plotly_dark")
+    fig.update_layout(barmode='overlay')
+    fig.update_traces(opacity=0.8)
+
     graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
 
     return graphJSON
