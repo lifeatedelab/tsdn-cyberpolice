@@ -1,6 +1,5 @@
 import json
 
-import joblib
 import pandas as pd
 import plotly
 import plotly.express as px
@@ -8,11 +7,11 @@ import plotly.figure_factory as ff
 import uvicorn
 from fastapi import FastAPI, File, HTTPException, Request, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.middleware.httpsredirect import HTTPSRedirectMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from nfstream import NFStreamer
 from starlette.middleware.trustedhost import TrustedHostMiddleware
+from xgboost import XGBClassifier
 
 app = FastAPI(
     title="Cyberpolice",
@@ -31,7 +30,9 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
 
 # Load the XGBoost model
-xgb = joblib.load("bin/xgboost_model.joblib")
+xgb = XGBClassifier()
+xgb.load_model("bin/xgb_2023-11-19_0.999959.json")
+# xgb = joblib.load("bin/xgboost_model.joblib")
 
 
 # Function to get DataFrame from pcap file
@@ -55,17 +56,20 @@ def get_df_from_pcap(file: UploadFile = File(...)):
 def analyze_df(df: pd.DataFrame):
     # df = get_df_from_pcap(file)
 
-    features = [
-        "bidirectional_first_seen_ms",
-        "bidirectional_last_seen_ms",
-        "dst2src_cwr_packets",
-        "dst2src_ece_packets",
-        "dst2src_urg_packets",
-        "dst2src_ack_packets",
-        "dst2src_psh_packets",
-        "dst2src_rst_packets",
-        "dst2src_fin_packets",
-    ]
+    with open('bin/features.json') as f_json:
+        features = json.load(f_json)
+
+    # features = [
+    #     "bidirectional_first_seen_ms",
+    #     "bidirectional_last_seen_ms",
+    #     "dst2src_cwr_packets",
+    #     "dst2src_ece_packets",
+    #     "dst2src_urg_packets",
+    #     "dst2src_ack_packets",
+    #     "dst2src_psh_packets",
+    #     "dst2src_rst_packets",
+    #     "dst2src_fin_packets",
+    # ]
 
     X_test = df[features]
     predictions = xgb.predict(X_test)
