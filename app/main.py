@@ -31,7 +31,7 @@ templates = Jinja2Templates(directory="templates")
 
 # Load the XGBoost model
 xgb = XGBClassifier()
-xgb.load_model("bin/xgb_2023-11-19_0.999959.json")
+xgb.load_model("bin/xgb_2023-11-19_0.999970.json")
 # xgb = joblib.load("bin/xgboost_model.joblib")
 
 
