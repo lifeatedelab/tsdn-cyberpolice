@@ -142,6 +142,16 @@ def get_application_bar(df):
 
     return graphJSON
 
+def get_category_bar(df):
+    # df = px.data.tips()
+    fig = px.histogram(df, y="application_category_name", template="plotly_dark").update_yaxes(
+        categoryorder="total ascending"
+    )
+    # print(df["dst2src_fin_packets"].unique())
+    graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
+
+    return graphJSON
+
 
 # Route for testing if the app is running
 @app.get("/")
@@ -156,7 +166,8 @@ async def analyze_endpoint(request: Request, file: UploadFile = File(...)):
     df = get_df_from_pcap(file=file)
     results = analyze_df(df)["predictions"]  # a binary array
     pie_chart = get_class_pie(results)
-    bfs_histogram = get_bfs_histogram(df=df)
+    # bfs_histogram = get_bfs_histogram(df=df)
+    category_bar = get_category_bar(df=df)
     app_bar = get_application_bar(df=df)
 
     return templates.TemplateResponse(
@@ -164,7 +175,8 @@ async def analyze_endpoint(request: Request, file: UploadFile = File(...)):
         {
             "request": request,
             "pie_chart": pie_chart,
-            "bfs_histogram": bfs_histogram,
+            # "bfs_histogram": bfs_histogram,
+            "category_bar" : category_bar,
             "app_bar": app_bar,
         },
     )
